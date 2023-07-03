@@ -1,0 +1,661 @@
+import greenfoot.*; 
+
+public class CircleCollider extends Actor {
+    private int radius; // Radio del colisionador
+
+    public CircleCollider(int radius) {
+        this.radius = radius;
+        GreenfootImage image = new GreenfootImage(2 * radius, 2 * radius);
+        image.setColor(Color.RED); // El color rojo es solo para visualización, puedes cambiarlo si lo deseas
+        image.fillOval(0, 0, 2 * radius, 2 * radius);
+        setImage(image);
+        setTransparency(45);
+    }
+    public void act() {
+        MouseInfo mouse = Greenfoot.getMouseInfo();
+        if (mouse != null) {
+            setLocation(mouse.getX(), mouse.getY());
+        }
+    }
+    public void setTransparency(int alpha) {
+        GreenfootImage image = getImage();
+        image.setTransparency(alpha);
+        setImage(image);
+    }
+}
+import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+
+/**
+ * Write a description of class Corazon here.
+ * 
+ * @author (your name) 
+ * @version (a version number or a date)
+ */
+public class Corazon extends Actor
+{
+    private int nCorazon;
+    public Corazon(){
+        
+       
+    } 
+    
+    public void act()
+    {
+        // Add your action code here.
+    }
+    public void removeVida(){
+         getWorld().removeObject(this);
+    }
+    
+}
+
+import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+
+/**
+ * Write a description of class g here.
+ * 
+ * @author (your name) 
+ * @version (a version number or a date)
+ */
+public class Door extends Actor
+{
+    /**
+     * Act - do whatever the g wants to do. This method is called whenever
+     * the 'Act' or 'Run' button gets pressed in the environment.
+     */
+    private BlackWorld world;
+    int destino;
+    int n,banderaNivel;
+    private GreenfootImage[] anima = new GreenfootImage[16];
+    private int animCounter = 0;
+    private Fed fedIn;
+    private GreenfootSound answer;
+    private boolean aparece =false;
+    public Door (BlackWorld world,int destino, int n,int banderaNivel){
+        this.world = world;
+        this.destino = 3;
+        this.n=n;
+        this.banderaNivel=banderaNivel;
+        setImage("doorClosed.jpg"); 
+        initAnimationSprites();
+
+    }
+   public void act()
+    {
+      
+        if (Greenfoot.mouseClicked(this)) {
+        // Se ha hecho clic en la puerta
+         //setImage("doorOpen.jpg"); // Cambiar la imagen a "doorOpen.jpg"
+            if(destino==3){
+                banderaNivel++;
+                bandera();
+                answer = new GreenfootSound("sounds/correct.mp3");
+                answer.play();
+                fedIn = new Fed();
+                world.addObject(fedIn ,world.getWidth()/2 , world.getHeight()/2);
+                fedIn.fedOutAnim();
+                if(banderaNivel==2){
+                    Greenfoot.setWorld(new SegunCorredor(n,banderaNivel));
+                }else if(banderaNivel==3)
+                    Greenfoot.setWorld(new TerCorredor(n,banderaNivel));
+                else if(banderaNivel==4)
+                    Greenfoot.setWorld(new Fin()); 
+            }else if(destino==2){
+                bandera();
+                world.apareceFantasma();
+                
+            }else if(destino==1){
+                bandera();
+                answer = new GreenfootSound("sounds/incorrect.mp3");
+                answer.play();
+                Greenfoot.setWorld(new PrimCorredor(n,1));
+            }
+        }
+        
+        
+    }
+    public void bandera(){
+        if(aparece == false){
+              openDoor();
+              aparece=true;
+             // return;
+            }
+    }
+      public void initAnimationSprites() {
+    int index = 1;
+    for (int i = 0; i < 16; i++) {
+        String formattedIndex = String.format("%04d", index);
+        String filename = "anima" + formattedIndex + ".jpg";
+        anima[i] = new GreenfootImage(filename);
+        index += 12; 
+        }
+   
+    }
+  
+    public void animateDoor(){   
+        setImage(anima[animCounter % 16]);
+        animCounter++;
+        
+    }
+     public void openDoor() {
+       
+        for (int i = 0; i < 16; i++) {
+            Greenfoot.delay(3);// Agregar un pequeño retraso entre cada fotograma
+            animateDoor();
+           
+        }
+       
+    }
+    
+}
+import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+
+/**
+ * Write a description of class Fed here.
+ * 
+ * @author (your name) 
+ * @version (a version number or a date)
+ */
+public class Fed extends Actor
+{
+    /**
+     * Act - do whatever the Fed wants to do. This method is called whenever
+     * the 'Act' or 'Run' button gets pressed in the environment.
+     */
+    private GreenfootImage[] fed = new GreenfootImage[4];
+    private int currentBackgroundIndex = 0;
+    
+    public Fed(){
+        initFedIn();
+    }
+    public void act()
+    {
+        
+        
+    }
+    public void fedInAnim(){
+        
+        setImage(fed[0]);
+        Greenfoot.delay(25); 
+        for(int i = 0;i<4;i++){
+            /*
+            Greenfoot.delay(10);    
+            currentBackgroundIndex = (currentBackgroundIndex + 1) % fed.length;
+            setImage(fed[currentBackgroundIndex]);
+            clearPreviousBackground();
+            */
+            //jumpscare.play();
+            Greenfoot.delay(9); 
+            setImage(fed[i]);
+        }     
+    }
+    public void fedOutAnim(){
+        
+        for(int i = 3;  i>0;i--){
+            //jumpscare.play();
+            Greenfoot.delay(5);    
+            setImage(fed[i]);
+        }     
+    }
+    public void clearPreviousBackground() {
+        int previousIndex = (currentBackgroundIndex - 1 + fed.length) % fed.length;
+        fed[previousIndex].clear();
+    }
+    public void initFedIn() {
+        fed[0]=new GreenfootImage("fed1.png");
+        fed[1]=new GreenfootImage("fed2.png");
+        fed[2]=new GreenfootImage("fed3.png");
+        fed[3]=new GreenfootImage("fed4.png");
+    }
+}
+import greenfoot.*;    // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+
+/**
+ * Write a description of class Label here.
+ * 
+ * @author (your name) 
+ * @version (a version number or a date)
+ */
+public class Label extends Actor
+{
+     private int delayR; 
+    private int count;
+
+    public Label() {
+        count = 100;
+       
+        updateImage();
+    }
+
+    public void act() {
+         
+    }
+      // count--;
+       // updateImage();
+       public int act2(){
+         delayR=Greenfoot.getRandomNumber(3);
+         count-=delayR;
+         Greenfoot.delay(delayR);
+          if(count > 0){
+            updateImage();
+          }else{
+           count=0;
+           updateImage();
+          }// Cambio: se verifica si el temporizador aún no ha terminado
+           return count;
+       }
+      private void updateImage() {
+        GreenfootImage image = new GreenfootImage("Vida: " + count, 25, Color.WHITE, Color.BLACK);
+        setImage(image);
+    }
+    public int getCount() {
+    return count;
+    }
+
+}
+import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+import java.awt.Rectangle;
+/**
+ * Write a description of class Phantom here.
+ * 
+ * @author (your name) 
+ * @version (a version number or a date)
+ */
+
+public class Phantom extends Actor
+{
+    GreenfootImage[] idle = new GreenfootImage[12];
+    GreenfootImage[] spawn = new GreenfootImage[12];
+    
+    private int velocidadMaxima = 5;
+    private int velocidadActual = 0;
+    private int aceleracion = 1;
+    private int direccionX = 1;
+    private int direccionY = 1;
+    
+    private int colisionadorSize = 1;
+    private Rectangle colisionador;
+    private int animIdleCounter = 0;
+    private int animCounterSpawn = 0;
+    private int delayCounter = 0;
+    private int delayDuration = 10; // Duración del retraso en act cycles
+    private boolean beingTouched = false;
+    private Label label;
+    private Timer timer;
+    private Corazon c1;
+    private Corazon c2;
+    private Corazon c3;
+    private boolean aparece =false;
+    private int n;
+    private int banderaNivel;
+    public Phantom (Label label, Timer timer, int n,int banderaNivel){
+        this.label = label;
+        this.timer=timer;
+        this.n=n;
+        this.banderaNivel=banderaNivel;
+        colisionador = new Rectangle(colisionadorSize, colisionadorSize);
+        initAnimationSpritesIdle();
+        initAnimationSpritesSpawn();
+     
+      
+    }
+    public void act()
+    {
+         if(aparece == false){
+          spawn();
+          aparece=true;
+          return;
+        }
+        mover();
+        checkCollision();
+        checkLabelCount();
+        checkTimerCount();
+        updateLabelPosition();
+    }
+    private void mover() {
+        if (!beingTouched) {
+        // Restablecer velocidad normal
+        velocidadMaxima = 5*banderaNivel;
+        aceleracion = 1*banderaNivel;
+        }
+        // Actualizar la velocidad actual según la aceleración
+        velocidadActual += aceleracion;
+
+        // Limitar la velocidad máxima
+        if (velocidadActual > velocidadMaxima) {
+            velocidadActual = velocidadMaxima;
+        }
+
+        // Actualizar la posición según la velocidad actual y la dirección de movimiento
+        int x = getX() + (direccionX * velocidadActual);
+        int y = getY() + (direccionY * velocidadActual);
+
+        // Verificar si el objeto está cerca de los límites de la pantalla
+        World world = getWorld();
+        int maxX = world.getWidth() - 1;
+        int maxY = world.getHeight() - 1;
+
+        if ((direccionX == 1 && direccionY == 1) && (x >= maxX || y >= maxY)) {
+            // Cambiar la dirección hacia arriba o hacia la izquierda para evitar la esquina
+            if (Greenfoot.getRandomNumber(2) == 0) {
+                direccionX = -1;
+            } else {
+                direccionY = -1;
+            }
+        } else if ((direccionX == -1 && direccionY == 1) && (x <= 0 || y >= maxY)) {
+            // Cambiar la dirección hacia arriba o hacia la derecha para evitar la esquina
+            if (Greenfoot.getRandomNumber(2) == 0) {
+                direccionX = 1;
+            } else {
+                direccionY = -1;
+            }
+        } else if ((direccionX == 1 && direccionY == -1) && (x >= maxX || y <= 0)) {
+            // Cambiar la dirección hacia abajo o hacia la izquierda para evitar la esquina
+            if (Greenfoot.getRandomNumber(2) == 0) {
+                direccionX = -1;
+            } else {
+                direccionY = 1;
+            }
+        } else if ((direccionX == -1 && direccionY == -1) && (x <= 0 || y <= 0)) {
+            // Cambiar la dirección hacia abajo o hacia la derecha para evitar la esquina
+            if (Greenfoot.getRandomNumber(2) == 0) {
+                direccionX = 1;
+            } else {
+                direccionY = 1;
+            }
+        }
+
+        // Actualizar la posición del objeto
+
+        setLocation(x, y);
+        animateIdleWithDelay();
+    }
+    
+
+    public void idle (){
+        //animateidle();
+        animateIdleWithDelay();
+       // setLocation(getX(),getY());
+       
+    }
+    public void initAnimationSpritesIdle() {
+        int index = 13;
+        for (int i = 0; i < 12; i++) {
+            String formattedIndex = String.format("%04d", index);
+            String filename = "idle" + formattedIndex + ".png";
+            idle[i] = new GreenfootImage(filename);
+            index += 1;
+        }
+        
+    }
+  
+    public void animateIdleWithDelay() {
+        if (delayCounter < delayDuration) {
+            delayCounter++;
+        } else {
+            setImage(idle[animIdleCounter % 12]);
+            animIdleCounter++;
+            delayCounter = 0;
+        }
+       
+    }
+    
+    
+    
+    public void initAnimationSpritesSpawn(){
+        int index2 = 1;
+        for (int i = 0; i < 12; i++) {
+        String formattedIndex = String.format("%04d", index2);
+            String filename = "Spawn" + formattedIndex + ".png";
+            spawn[i] = new GreenfootImage(filename);
+            index2 += 1;  // Increment the index by 2
+        }
+    }
+    public void spawn() {
+       
+        for (int i = 0; i < 12; i++) {
+            animateSpawn();
+            Greenfoot.delay(5); // Agregar un pequeño retraso entre cada fotograma
+        }
+       
+    }
+    public void animateSpawn(){
+        if (animCounterSpawn == 7){
+                Greenfoot.delay(15);
+            }
+        setImage(spawn[animCounterSpawn % 12]);
+        animCounterSpawn++;
+    }
+    
+    public void checkCollision() {
+    CircleCollider collider = (CircleCollider) getOneIntersectingObject(CircleCollider.class);
+    if (collider != null) {
+        increaseSpeed();
+        label.act2();
+        beingTouched = true; // Está siendo tocado
+    } else {
+        beingTouched = false; // No está siendo tocado
+    }
+    }
+   
+    public void increaseSpeed() {
+    velocidadMaxima += 2*banderaNivel; // Aumentar la velocidad máxima en 2 unidades
+    aceleracion += 1*banderaNivel; // Aumentar la aceleración en 1 unidad
+    }
+    
+    public void checkLabelCount() { //VENCE PERSONAJE A FANTASMA
+    if (label != null && label.getCount() == 0) {
+        // El contador del Label llegó a 0, desaparecer el fantasma y el Label
+         
+        World world= getWorld();
+        if (getWorld() != null) {
+            world.removeObject(this);
+            world.removeObject(label);
+            world.removeObject(timer);
+            banderaNivel++;
+                if(banderaNivel==2){
+                    Greenfoot.setWorld(new SegunCorredor(n,banderaNivel));
+                }else if(banderaNivel==3){
+                    Greenfoot.setWorld(new TerCorredor(n,banderaNivel));//modificar PASILLO3
+                }else if(banderaNivel==4)
+                    Greenfoot.setWorld(new Fin()); 
+        }
+      }
+    }
+
+       public void checkTimerCount() {//PIERDE PERSONAJE CON FANTASMA
+    if (timer != null && timer.getTime() < 0) {
+        n--;
+        World world= getWorld();
+        initAnimationSpritesSpawn();
+        spawn();
+         if(n==0){
+          Greenfoot.setWorld(new GameOver());  
+        }else
+        Greenfoot.setWorld(new PrimCorredor(n,banderaNivel));
+      }
+  
+    }
+    
+    private void updateLabelPosition() {
+    if (label != null && getWorld() != null) {
+        int offsetX = 10; // Ajusta el desplazamiento horizontal de la etiqueta
+        int offsetY = 10; // Ajusta el desplazamiento vertical de la etiqueta
+        if (getWorld().getObjects(Phantom.class).contains(this)) {
+            label.setLocation(getX() + offsetX, getY() + offsetY -120);
+        }
+    }
+    }
+
+    
+
+}
+import greenfoot.*;  
+import java.util.ArrayList;
+
+public class Principal extends Actor
+{
+    private boolean stepRigth = true;
+ 
+    public Principal(){
+    }
+    public void act()
+    {
+        checkKeys();
+
+    }
+    public void checkKeys(){
+        if(Greenfoot.isKeyDown("w")){
+            Greenfoot.delay(5);
+            moveForward();
+        }
+        //if(avtivePhatom==true)
+        //world.desapareceFantasma();
+    }
+    public void moveForward(){
+        animateFoward();
+    }
+
+    public void animateFoward(){
+        if(stepRigth){
+            setLocation(getX()-7,getY()-10);
+            stepRigth=false;
+        }else{
+            setLocation(getX()+7,getY()+10);
+            stepRigth=true;
+        }
+    }
+}
+/*import greenfoot.*;  
+
+public class Timer extends Actor 
+{
+    private int timer=60 ; // about 60 seconds = 55 * 10
+    private GreenfootImage[] walkForward = new GreenfootImage[5];
+    private int animCounter = 0;
+     //private int animationTimer = 55 * 2;
+   
+    
+    public Timer()
+    {
+        //timer;
+       // initAnimationSprites();
+       // updateImage();
+        //getTime();
+    }
+
+    public void act() {
+      if (getTime()<11) { // Cambio: se verifica si el temporizador aún no ha terminado
+          //  if (timer % 12 == 0) {  
+           // animateForward(); // Cambia la imagen utilizando el método animateForward()
+            updateImage();
+       // }
+    //}    
+            
+        }
+        //if (timer < 1) Greenfoot.stop();
+        getTime();
+       
+    }
+    public int getTime(){
+        timer--;
+        Greenfoot.delay(5);   
+        return timer;
+    }
+      public void updateImage() {
+        GreenfootImage image = new GreenfootImage("timer: " + timer, 30, Color.WHITE, Color.BLACK);
+        setImage(image);
+    }
+    
+     public void initAnimationSprites()
+    {
+        for (int i = 0; i < 5; i++) {
+            String filename = "a" + (i + 1) + ".png";
+            walkForward[i] = new GreenfootImage(filename);
+        }
+    }
+    
+    public void animateForward()
+    {
+        setImage(walkForward[animCounter % 5]);
+        animCounter++;
+      
+    }
+}*/
+
+import greenfoot.*;  
+
+public class Timer extends Actor 
+{
+    private int timer = 400; // aproximadamente 60 segundos = 55 * 10
+    private GreenfootImage[] walkForward = new GreenfootImage[5];
+    private int animCounter = 0;
+    private int mod=timer/5;
+    public Timer()
+    {
+        initAnimationSprites();
+       // updateImage();
+    }
+
+    public void act() {
+        timer--; 
+        if (timer%mod==0) {
+          //  updateImage();
+            animateForward();
+        }
+        
+        /*if (timer < 1) {
+            Greenfoot.stop();
+        }*/
+    }
+    
+    public int getTime() {  
+        return timer;
+    }
+    
+    public void updateImage() {
+        GreenfootImage image = new GreenfootImage("timer: " + timer/60, 30, Color.WHITE, Color.BLACK);
+        setImage(image);
+    }
+    
+    public void initAnimationSprites() {
+        for (int i = 0; i < 5; i++) {
+            String filename = "a" + (i + 1) + ".png";
+            walkForward[i] = new GreenfootImage(filename);
+        }
+    }
+    
+    public void animateForward() {
+        setImage(walkForward[animCounter % 5]);
+        animCounter++;
+    }
+}
+import greenfoot.*; 
+
+public class YellowCircle extends Actor {
+    private int radius; // Radio del círculo
+    
+    
+
+    public YellowCircle(int radius) {
+        this.radius = radius;
+        GreenfootImage image = new GreenfootImage(2 * radius, 2 * radius);
+        image.setColor(Color.YELLOW);
+        image.fillOval(0, 0, 2 * radius, 2 * radius);
+        setImage(image);
+        setTransparency(50);
+    }
+    
+    public void act() {
+        MouseInfo mouse = Greenfoot.getMouseInfo();
+        if (mouse != null) {
+            setLocation(mouse.getX(), mouse.getY());
+        }
+    }
+    public void setTransparency(int alpha) {
+        GreenfootImage image = getImage();
+        image.setTransparency(alpha);
+        setImage(image);
+    }
+
+}
