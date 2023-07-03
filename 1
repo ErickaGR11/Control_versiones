@@ -1,103 +1,39 @@
-import greenfoot.*;
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.awt.Rectangle;
+#include <stdio.h>
+#define MAX 4
+void Solicitar_numeros(int arr[MAX]);
+int BuscarBinarioRecursivo(int arr[MAX], int num_Abuscar, int fin,  int inicio);
 
-public class Backgro extends World
+int main()
 {
-    private GreenfootImage[] backgrounds = new GreenfootImage[22];
-    private int currentBackgroundIndex = 0;
-    private YellowCircle yc = new YellowCircle(70);
-    //private GreenfootSound amb;
-    private int z;
-    private Corazon c1, c2,c3;
-    private int n,banderaNivel;
-    
-     public Backgro()
-    {   
-        super(1280, 720, 1);
-        n=3;//num corazon
-        banderaNivel=1;
-      
-        c1=new Corazon();
-        c2=new Corazon();
-        c3=new Corazon();
-        addObject(c3, 425 , 70 ); 
-        addObject(c2, 350 , 70 );
-        addObject(c1, 275 , 70 );
-               
-        Principal principal = new Principal();
-        addObject(principal, getWidth()-1000 , getHeight()-50);
-        initBackgrounds();
-        setBackground(backgrounds[currentBackgroundIndex]);
-        addObject(yc, getWidth()/2 , getHeight()/2 );
-       // amb = new GreenfootSound("sounds/amb.mp3");
-        //amb.playLoop();
-    }
-      public Backgro(int n, int banderaNivel)
-    {    
-        super(1280, 720, 1);
-        this.n=n;
-        this.banderaNivel=banderaNivel;
-        if(n==2){
-        c1=new Corazon();
-        c2=new Corazon();
-        addObject(c1, 275 , 70 );
-        addObject(c2, 350 , 70 );
-        }else if(n==1){
-            c1=new Corazon();
-            addObject(c1, 275 , 70 );
-        }else if(n==3){
-            c1=new Corazon();
-            c2=new Corazon();
-            c3=new Corazon();
-            addObject(c3, 425 , 70 ); 
-            addObject(c2, 350 , 70 );
-            addObject(c1, 275 , 70 );
-        }
-          
-        Principal principal = new Principal();
-        addObject(principal, getWidth()-1000 , getHeight()-50);
-        initBackgrounds();
-        setBackground(backgrounds[currentBackgroundIndex]);
-        addObject(yc, getWidth()/2 , getHeight()/2 );
-       // amb = new GreenfootSound("sounds/amb.mp3");
-       // amb.playLoop();
-    }
-    public void act()
+    int arr[MAX];
+    int caracter_obj;
+    int result;
+    Solicitar_numeros(arr);
+    printf("Dame el objetivo:");
+    scanf("%d", &caracter_obj);
+
+    result= BuscarBinarioRecursivo( arr,  caracter_obj,  MAX,  0);
+    printf("Salida: %d", result);
+}
+void Solicitar_numeros(int arr[MAX]){
+    printf("Dame los numeros:\n");
+    for(int i = 0; i < MAX; i++)
     {
-        checkKeyPressBck();
+        printf("numero [%d]:", i);
+        scanf("%d", &arr[i]);
     }
+}
 
-    
-
-    public void checkKeyPressBck()
-    {
-        if (Greenfoot.isKeyDown("w"))
-        {
-            Greenfoot.delay(5);
-            currentBackgroundIndex = (currentBackgroundIndex + 1) % backgrounds.length;
-            setBackground(backgrounds[currentBackgroundIndex]);
-            clearPreviousBackground();
-            z++;
-            if(z>15){
-                Greenfoot.setWorld(new BlackWorld(n,banderaNivel));
-            }
+int BuscarBinarioRecursivo(int arr[MAX], int num_Abuscar, int fin,  int inicio){
+    if(inicio==fin){
+        return 0;
+    }
+    int mitad=inicio + (fin - inicio) / 2;
+    if(arr[mitad]>num_Abuscar){
+        if(arr[mitad-1]>num_Abuscar){
+            return BuscarBinarioRecursivo(arr, num_Abuscar, mitad-1,  inicio);
         }
+        return mitad-1;
     }
-
-    public void initBackgrounds() {
-    int index = 1;
-    for (int i = 0; i < 21; i++) {
-        String formattedIndex = String.format("%04d", index);
-        String filename = "back" + formattedIndex + ".jpg";
-        backgrounds[i] = new GreenfootImage(filename);
-        index += 15;  // Increment the index by 2
-    }
-    }
-  
-    public void clearPreviousBackground() {
-        int previousIndex = (currentBackgroundIndex - 1 + backgrounds.length) % backgrounds.length;
-        backgrounds[previousIndex].clear();
-    }
+    return BuscarBinarioRecursivo(arr, num_Abuscar, fin, mitad+1);
 }
