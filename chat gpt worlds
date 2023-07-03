@@ -1,0 +1,584 @@
+import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+
+/**
+ * Write a description of class terCorredor here.
+ * 
+ * @author (your name) 
+ * @version (a version number or a date)
+ */
+public class TerCorredor extends World
+{
+    private GreenfootImage[] terCorredor = new GreenfootImage[24];
+    private int currentBackgroundIndex = 0;
+    private GreenfootSound amb;
+    private int z=0;
+     private YellowCircle yc = new YellowCircle(70);
+    private Corazon c1, c2,c3;
+    private int n,banderaNivel;
+    private Fed fedIn;
+    public TerCorredor(int n, int banderaNivel)
+    {    
+        // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
+        super(1280, 720, 1);
+        this.n=n;
+        this.banderaNivel=banderaNivel;
+        if(n==2){
+        c1=new Corazon();
+        c2=new Corazon();
+        addObject(c1, 275 , 70 );
+        addObject(c2, 350 , 70 );
+        }else if(n==1){
+            c1=new Corazon();
+            addObject(c1, 275 , 70 );
+        }else if(n==3){
+            c1=new Corazon();
+            c2=new Corazon();
+            c3=new Corazon();
+            addObject(c3, 425 , 70 ); 
+            addObject(c2, 350 , 70 );
+            addObject(c1, 275 , 70 );
+        }
+        
+        initBackgrounds();
+        setBackground(terCorredor[currentBackgroundIndex]);
+        amb = new GreenfootSound("sounds/amb.mp3");
+        amb.play();
+        
+    }
+     public void act()
+    {
+        checkKeyPressBck();
+        
+    }
+
+    public void checkKeyPressBck()
+    {
+        if (Greenfoot.isKeyDown("w"))
+        {
+            Greenfoot.delay(8);
+            currentBackgroundIndex = (currentBackgroundIndex + 1) % terCorredor.length;
+            setBackground(terCorredor[currentBackgroundIndex]);
+            clearPreviousBackground();
+            z++;
+            if(z>23){
+                amb.stop();
+                fedIn = new Fed();
+                addObject(fedIn ,getWidth()/2 , getHeight()/2);
+                fedIn.fedOutAnim();
+                Greenfoot.setWorld(new BlackWorld(n,banderaNivel ));
+            }
+        }
+    }
+
+    public void initBackgrounds() {
+    int index = 1;
+    for (int i = 0; i < 24; i++) {
+        String formattedIndex = String.format("%04d", index);
+        String filename = "terCorredor" + formattedIndex + ".jpg";
+        terCorredor[i] = new GreenfootImage(filename);
+        index += 22; 
+    }
+    }
+  
+    public void clearPreviousBackground() {
+        int previousIndex = (currentBackgroundIndex - 1 + terCorredor.length) % terCorredor.length;
+        terCorredor[previousIndex].clear();
+    }
+}
+import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+
+/**
+ * Write a description of class Fin here.
+ * 
+ * @author (your name) 
+ * @version (a version number or a date)
+ */
+public class Fin extends World
+{
+
+    private GreenfootImage[] fin = new GreenfootImage[15];
+    private int currentBackgroundIndex = 0;
+    //private GreenfootSound amb;
+    private int z,n;
+    private Fed fedIn;
+    private boolean time = false;
+    public Fin()
+    {    
+        // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
+        super(1280, 720, 1);
+        //this.n=n;
+        initBackgrounds();
+        //setBackground(fin[currentBackgroundIndex]);
+        //amb = new GreenfootSound("sounds/amb.mp3");
+        //amb.playLoop();
+    }
+     public void act()
+    {
+        if(time == false){
+            currentBackgroundIndex = (currentBackgroundIndex + 1) % fin.length;
+            setBackground(fin[currentBackgroundIndex]);
+            clearPreviousBackground();
+            fedIn = new Fed();
+            addObject(fedIn ,getWidth()/2 , getHeight()/2);
+            fedIn.fedInAnim();
+            removeObject(fedIn);
+            
+            time=true;
+        }
+        checkKeyPressBck();
+        
+    }
+
+    public void checkKeyPressBck()
+    {
+        if (Greenfoot.isKeyDown("w"))
+        {
+            Greenfoot.delay(5);
+            currentBackgroundIndex = (currentBackgroundIndex + 1) % fin.length;
+            setBackground(fin[currentBackgroundIndex]);
+            clearPreviousBackground();
+            z++;
+            if(z>14){
+                // amb.stop();
+                 Greenfoot.setWorld(new GameOver());                
+            }
+        }
+    }
+
+    public void initBackgrounds() {
+    int index = 20;
+    for (int i = 0; i < 15; i++) {
+        String formattedIndex = String.format("%04d", index);
+        String filename = "fin" + formattedIndex + ".jpg";
+        fin[i] = new GreenfootImage(filename);
+        index += 19; 
+    }
+    }
+  
+    public void clearPreviousBackground() {
+        int previousIndex = (currentBackgroundIndex - 1 + fin.length) % fin.length;
+        fin[previousIndex].clear();
+    }
+}
+import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+
+/**
+ * Write a description of class GameOver here.
+ * 
+ * @author (your name) 
+ * @version (a version number or a date)
+ */
+public class GameOver extends World
+{
+     private GreenfootImage[] gOver = new GreenfootImage[23];
+    private int currentBackgroundIndex = 0;
+    //private GreenfootSound amb;
+    int n;
+    
+    public GameOver()
+    {    
+        // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
+        super(1280, 720, 1);
+       
+        initBackgrounds();
+        setBackground(gOver[currentBackgroundIndex]);
+       // amb = new GreenfootSound("sounds/amb.mp3");
+        //amb.stop();
+    }
+     public void act()
+    {
+        checkKeyPressBck();
+       
+        
+    }
+
+    public void checkKeyPressBck()
+    {
+            currentBackgroundIndex = (currentBackgroundIndex + 1) % gOver.length;
+            setBackground(gOver[currentBackgroundIndex]);
+            clearPreviousBackground();
+             if(currentBackgroundIndex==22){
+                 //amb.stop();
+                 Greenfoot.stop();
+             }
+               
+            
+    }
+  
+    public void initBackgrounds() {
+    int index = 100;
+    for (int i = 0; i < 23; i++) {
+        String formattedIndex = String.format("%04d", index);
+        String filename = "gOver" + formattedIndex + ".jpg";
+        gOver[i] = new GreenfootImage(filename);
+        index += 2; 
+    }
+    }
+  
+    public void clearPreviousBackground() {
+        int previousIndex = (currentBackgroundIndex - 1 + gOver.length) % gOver.length;
+        gOver[previousIndex].clear();
+    }
+   
+}
+import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+
+/**
+ * Write a description of class Inicio here.
+ * 
+ * @author (your name) 
+ * @version (a version number or a date)
+ */
+public class Inicio extends World
+{
+    private GreenfootImage[] inicio = new GreenfootImage[22];
+    private int currentBackgroundIndex = 0;
+    private GreenfootSound amb;
+    private int z=0;
+    boolean start = false;
+    public Inicio()
+    {    
+        // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
+        super(1280, 720, 1);
+        initBackgrounds();
+        setBackground(inicio[currentBackgroundIndex]);
+        //letrero = new Letrero();
+        
+       // int bottomY = getHeight() - letrero.getImage().getHeight()-25;
+        //addObject(letrero, getWidth() / 2, bottomY);
+        
+        amb = new GreenfootSound("sounds/amb.mp3");
+        //amb.playLoop();
+        
+    }
+     public void act()
+    {
+        checkKeyPressBck();
+        
+    }
+       
+    
+    public void checkKeyPressBck()
+    {   
+        
+        if (Greenfoot.isKeyDown("space")){
+            start = true;
+            amb.play();
+          //  removeObject(letrero);
+        }
+        if (start == true)
+        {
+           
+            Greenfoot.delay(5);
+            currentBackgroundIndex = (currentBackgroundIndex + 1) % inicio.length;
+            setBackground(inicio[currentBackgroundIndex]);
+            clearPreviousBackground();
+            z++;
+            if(z>20){
+                amb.stop();
+                Greenfoot.setWorld(new PrimCorredor());
+                
+            }
+        }
+    }
+
+    public void initBackgrounds() {
+    int index = 1;
+    for (int i = 0; i < 21; i++) {
+        String formattedIndex = String.format("%04d", index);
+        String filename = "inicio" + formattedIndex + ".jpg";
+        inicio[i] = new GreenfootImage(filename);
+        index += 12; 
+    }
+    }
+  
+    public void clearPreviousBackground() {
+        int previousIndex = (currentBackgroundIndex - 1 + inicio.length) % inicio.length;
+        inicio[previousIndex].clear();
+    }
+}
+import greenfoot.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.awt.Rectangle;
+
+public class PrimCorredor extends World
+{
+    private GreenfootImage[] backgrounds = new GreenfootImage[22];
+    private int currentBackgroundIndex = 0;
+    private YellowCircle yc = new YellowCircle(70);
+    private GreenfootSound amb;
+    private int z;
+    private Corazon c1, c2,c3;
+    private int n,banderaNivel;
+    private Fed fedIn;
+     public PrimCorredor()
+    {   
+        super(1280, 720, 1);
+        n=3;//num corazon
+        banderaNivel=1;
+      
+        c1=new Corazon();
+        c2=new Corazon();
+        c3=new Corazon();
+        addObject(c3, 425 , 70 ); 
+        addObject(c2, 350 , 70 );
+        addObject(c1, 275 , 70 );
+               
+        Principal principal = new Principal();
+        addObject(principal, getWidth()-1000 , getHeight()-50);
+        initBackgrounds();
+        setBackground(backgrounds[currentBackgroundIndex]);
+        addObject(yc, getWidth()/2 , getHeight()/2 );
+        amb = new GreenfootSound("sounds/amb.mp3");
+        amb.playLoop();
+    }
+      public PrimCorredor(int n, int banderaNivel)
+    {    
+        super(1280, 720, 1);
+        this.n=n;
+        this.banderaNivel=banderaNivel;
+        if(n==2){
+        c1=new Corazon();
+        c2=new Corazon();
+        addObject(c1, 275 , 70 );
+        addObject(c2, 350 , 70 );
+        }else if(n==1){
+            c1=new Corazon();
+            addObject(c1, 275 , 70 );
+        }else if(n==3){
+            c1=new Corazon();
+            c2=new Corazon();
+            c3=new Corazon();
+            addObject(c3, 425 , 70 ); 
+            addObject(c2, 350 , 70 );
+            addObject(c1, 275 , 70 );
+        }
+          
+        Principal principal = new Principal();
+        addObject(principal, getWidth()-1000 , getHeight()-50);
+        initBackgrounds();
+        setBackground(backgrounds[currentBackgroundIndex]);
+        addObject(yc, getWidth()/2 , getHeight()/2 );
+        amb = new GreenfootSound("sounds/amb.mp3");
+        amb.play();
+    }
+    public void act()
+    {
+        checkKeyPressBck();
+    }
+
+    
+
+    public void checkKeyPressBck()
+    {
+        if (Greenfoot.isKeyDown("w"))
+        {
+            Greenfoot.delay(5);
+            currentBackgroundIndex = (currentBackgroundIndex + 1) % backgrounds.length;
+            setBackground(backgrounds[currentBackgroundIndex]);
+            clearPreviousBackground();
+            z++;
+            if(z>19){
+                fedIn = new Fed();
+                addObject(fedIn ,getWidth()/2 , getHeight()/2);
+                fedIn.fedOutAnim();
+                amb.stop();
+                Greenfoot.setWorld(new BlackWorld(n,banderaNivel));
+            }
+        }
+    }
+
+    public void initBackgrounds() {
+    int index = 1;
+    for (int i = 0; i < 21; i++) {
+        String formattedIndex = String.format("%04d", index);
+        String filename = "back" + formattedIndex + ".jpg";
+        backgrounds[i] = new GreenfootImage(filename);
+        index += 15;  // Increment the index by 2
+    }
+    }
+  
+    public void clearPreviousBackground() {
+        int previousIndex = (currentBackgroundIndex - 1 + backgrounds.length) % backgrounds.length;
+        backgrounds[previousIndex].clear();
+    }
+}
+import greenfoot.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.awt.Rectangle;
+
+public class SegunCorredor extends World
+{
+    private GreenfootImage[] resplandor = new GreenfootImage[24];
+    private int currentBackgroundIndex = 0;
+    private YellowCircle yc = new YellowCircle(70);
+    private GreenfootSound amb;
+    private int z;
+    private Corazon c1, c2,c3;
+    private int n,banderaNivel;
+    private Fed fedIn;
+    
+    public SegunCorredor(int n, int banderaNivel)
+    {    
+        super(1280, 720, 1);
+        this.n=n;
+        this.banderaNivel=banderaNivel;
+        if(n==2){
+        c1=new Corazon();
+        c2=new Corazon();
+        addObject(c1, 275 , 70 );
+        addObject(c2, 350 , 70 );
+        }else if(n==1){
+            c1=new Corazon();
+            addObject(c1, 275 , 70 );
+        }else if(n==3){
+            c1=new Corazon();
+            c2=new Corazon();
+            c3=new Corazon();
+            addObject(c3, 425 , 70 ); 
+            addObject(c2, 350 , 70 );
+            addObject(c1, 275 , 70 );
+        }
+          
+        Principal principal = new Principal();
+        addObject(principal, getWidth()-1000 , getHeight()-50);
+        initBackgrounds();
+        setBackground(resplandor[currentBackgroundIndex]);
+        addObject(yc, getWidth()/2 , getHeight()/2 );
+        amb = new GreenfootSound("sounds/amb.mp3");
+        amb.playLoop();
+    }
+  
+    public void act()
+    {
+        checkKeyPressBck();
+   
+    }
+
+    public void checkKeyPressBck()
+    {
+        if (Greenfoot.isKeyDown("w"))
+        {
+            Greenfoot.delay(5);
+            currentBackgroundIndex = (currentBackgroundIndex + 1) % resplandor.length;
+            setBackground(resplandor[currentBackgroundIndex]);
+            clearPreviousBackground();
+            z++;
+            if(z>19){
+                amb.stop();
+                fedIn = new Fed();
+                addObject(fedIn ,getWidth()/2 , getHeight()/2);
+                fedIn.fedOutAnim();
+                Greenfoot.setWorld(new BlackWorld(n,banderaNivel));
+            }
+        }
+    }
+
+    public void initBackgrounds() {
+    int index = 1;
+    for (int i = 0; i < 24; i++) {
+        String formattedIndex = String.format("%04d", index);
+        String filename = "resp" + formattedIndex + ".jpg";
+        resplandor[i] = new GreenfootImage(filename);
+        index += 18;  // Increment the index 
+    }
+    }
+  
+    public void clearPreviousBackground() {
+        int previousIndex = (currentBackgroundIndex - 1 + resplandor.length) % resplandor.length;
+        resplandor[previousIndex].clear();
+    }
+
+  
+}
+
+
+import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+
+/**
+ * Write a description of class terCorredor here.
+ * 
+ * @author (your name) 
+ * @version (a version number or a date)
+ */
+public class TerCorredor extends World
+{
+    private GreenfootImage[] terCorredor = new GreenfootImage[24];
+    private int currentBackgroundIndex = 0;
+    private GreenfootSound amb;
+    private int z=0;
+     private YellowCircle yc = new YellowCircle(70);
+    private Corazon c1, c2,c3;
+    private int n,banderaNivel;
+    private Fed fedIn;
+    public TerCorredor(int n, int banderaNivel)
+    {    
+        // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
+        super(1280, 720, 1);
+        this.n=n;
+        this.banderaNivel=banderaNivel;
+        if(n==2){
+        c1=new Corazon();
+        c2=new Corazon();
+        addObject(c1, 275 , 70 );
+        addObject(c2, 350 , 70 );
+        }else if(n==1){
+            c1=new Corazon();
+            addObject(c1, 275 , 70 );
+        }else if(n==3){
+            c1=new Corazon();
+            c2=new Corazon();
+            c3=new Corazon();
+            addObject(c3, 425 , 70 ); 
+            addObject(c2, 350 , 70 );
+            addObject(c1, 275 , 70 );
+        }
+        
+        initBackgrounds();
+        setBackground(terCorredor[currentBackgroundIndex]);
+        amb = new GreenfootSound("sounds/amb.mp3");
+        amb.play();
+        
+    }
+     public void act()
+    {
+        checkKeyPressBck();
+        
+    }
+
+    public void checkKeyPressBck()
+    {
+        if (Greenfoot.isKeyDown("w"))
+        {
+            Greenfoot.delay(8);
+            currentBackgroundIndex = (currentBackgroundIndex + 1) % terCorredor.length;
+            setBackground(terCorredor[currentBackgroundIndex]);
+            clearPreviousBackground();
+            z++;
+            if(z>23){
+                amb.stop();
+                fedIn = new Fed();
+                addObject(fedIn ,getWidth()/2 , getHeight()/2);
+                fedIn.fedOutAnim();
+                Greenfoot.setWorld(new BlackWorld(n,banderaNivel ));
+            }
+        }
+    }
+
+    public void initBackgrounds() {
+    int index = 1;
+    for (int i = 0; i < 24; i++) {
+        String formattedIndex = String.format("%04d", index);
+        String filename = "terCorredor" + formattedIndex + ".jpg";
+        terCorredor[i] = new GreenfootImage(filename);
+        index += 22; 
+    }
+    }
+  
+    public void clearPreviousBackground() {
+        int previousIndex = (currentBackgroundIndex - 1 + terCorredor.length) % terCorredor.length;
+        terCorredor[previousIndex].clear();
+    }
+}
