@@ -1,9 +1,7 @@
-------------------------------------------------------------------------
-This is the project README file. Here, you should describe your project.
-Tell the reader (someone who does not know anything about this project)
-all they need to know. The comments should usually include at least:
-------------------------------------------------------------------------
 
+Dark Mazer: ghostly  decisions
+Es un juego con implementacion en greenfoot. Greenfoot es es un entorno de desarrollo interactivo y educativo, basado en el lenguaje Java que permite visualizar y manipular objetos en un escenario 2D, la innovacion radica en la implementación de técnicas que brindan la ilusión de estar jugando en un entorno 3D, a pesar de ser un entorno 2D. Mediante el uso de efectos visuales y manipulaciones de perspectiva, combinando la simplicidad de Greenfoot con un enfoque visual avanzado.
+------------------------------------------------------------------------
 PROJECT TITLE: Dark Mazer: ghostly  decisions
 AUTHORS:
 Ericka Gonzalez Romero
